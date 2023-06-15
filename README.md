@@ -66,10 +66,19 @@ Follow these steps to deploy the Lambda function using GitHub Actions:
    - `AWS_SECRET_ACCESS_KEY`: Your AWS secret access key.
    - `AWS_DEFAULT_REGION`: The AWS region where you want to deploy the Lambda function.
 
-4. Update the workflow file: Open the `.github/workflows/deploy-lambda.yml` file in your repository, and make the following changes:
+   By just going to `Repository > Settings > Secrets and variables > Actions > New repository secret`
 
-   - Replace `YOUR_LAMBDA_FUNCTION_NAME` with the name you want to give to your Lambda function.
-   - Replace `YOUR_AWS_ROLE_ARN` with the ARN of the IAM role you created in step 2.
+4. To ensure a smooth deployment process and avoid conflicts, follow these steps:
+
+    1. Before the initial deployment, manually create the Lambda function in the AWS Management Console with the same name and region as specified in the workflow file.
+
+    2. After the function is created, you can proceed with the deployment using GitHub Actions.
+
+      The workflow will use the `aws lambda delete-function` command to update the function code.
+      The `aws lambda delete-function` command is used as a precautionary step to delete the existing function (if it exists) before creating a new one with the updated code.
+      By following this approach, you can ensure that the Lambda function is successfully updated during each deployment without encountering conflicts or errors related to the function already existing.
+
+
 
 5. Commit and push changes: Save the changes to the workflow file and commit them to the `main` branch of your repository.
 
@@ -80,7 +89,3 @@ Follow these steps to deploy the Lambda function using GitHub Actions:
 That's it! The Lambda function will be deployed automatically whenever changes are pushed to the `main` branch of your repository. You can view the workflow execution details in the "Actions" tab of your GitHub repository.
 
 ---
-
-Please make sure to replace
-
- `YOUR_LAMBDA_FUNCTION_NAME` with the desired name for your Lambda function, and `YOUR_AWS_ROLE_ARN` with the actual ARN of the IAM role you created in step 2.
