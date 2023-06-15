@@ -1,0 +1,15 @@
+{
+  "name": "hello-world-lambda",
+  "version": "1.0.0",
+  "description": "Hello World Lambda Function",
+  "scripts": {
+    "build": "zip -r function.zip ."
+  },
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "zip": "^1.2.0"
+  }
+}

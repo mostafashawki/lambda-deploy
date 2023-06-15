@@ -1,0 +1,47 @@
+name: Deploy Lambda
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Install AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --update
+
+      - name: Configure AWS credentials
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set region eu-central-1
+
+      - name: Create deployment package
+        run: zip -r lambda-package.zip index.js
+
+      - name: Deploy Lambda function
+        run: |
+         aws lambda delete-function --function-name hello-world --region eu-central-1 || true
+         aws lambda create-function \
+            --function-name hello-world \
+            --runtime nodejs18.x \
+            --handler index.handler \
+            --zip-file fileb://lambda-package.zip \
+            --role arn:aws:iam::399622238414:role/lambda-role
+
+      - name: Cleanup
+        run: rm lambda-package.zip
